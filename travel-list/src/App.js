@@ -43,7 +43,6 @@ function Form(){
           <option value={num} key={num}>
             {num}
           </option>)} 
-          
       </select>
       <input type="text" placeholder="Item..." 
       value={description} 
