@@ -62,16 +62,28 @@ export default function App() {
 function NavBar() {
   return (
     <nav className="nav-bar">
-      <div className="logo">
+      <Logo />
+      <Search />
+      <NumResults />
+    </nav>
+  );
+}
+
+function Logo(){
+  return (
+    <div className="logo">
         <span role="img">🍿</span>
         <h1>usePopcorn</h1>
       </div>
-      <Search />
-      <p className="num-results">
+  )
+}
+
+function NumResults(){
+  return(
+    <p className="num-results">
         Found <strong>X</strong> results
       </p>
-    </nav>
-  );
+  )
 }
 
 function Search() {
@@ -88,16 +100,19 @@ function Search() {
 }
 
 function Main() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
-  const [isOpen1, setIsOpen1] = useState(true);
-  const [isOpen2, setIsOpen2] = useState(true);
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
+  
   return (
     <main className="main">
-      <div className="box">
+      <ListBox />
+      <WatchedBox />
+    </main>
+  );
+}
+
+function ListBox(){
+    const [isOpen1, setIsOpen1] = useState(true);
+  return(
+    <div className="box">
         <button
           className="btn-toggle"
           onClick={() => setIsOpen1((open) => !open)}
@@ -105,9 +120,27 @@ function Main() {
           {isOpen1 ? "–" : "+"}
         </button>
         {isOpen1 && (
-          <ul className="list">
+          <MovieList />
+        )}
+      </div>
+  )
+}
+
+function MovieList() {
+  const [movies, setMovies] = useState(tempMovieData);
+
+  return(
+    <ul className="list">
             {movies?.map((movie) => (
-              <li key={movie.imdbID}>
+              <Movie movie={movie} key={movie.imdbID} />
+            ))}
+          </ul>
+  )
+}
+
+function Movie({ movie }) {
+  return(
+    <li>
                 <img src={movie.Poster} alt={`${movie.Title} poster`} />
                 <h3>{movie.Title}</h3>
                 <div>
@@ -117,12 +150,14 @@ function Main() {
                   </p>
                 </div>
               </li>
-            ))}
-          </ul>
-        )}
-      </div>
+  )
+}
 
-      <div className="box">
+function WatchedBox(){
+  const [watched, setWatched] = useState(tempWatchedData);
+  const [isOpen2, setIsOpen2] = useState(true);
+    return(
+    <div className="box">
         <button
           className="btn-toggle"
           onClick={() => setIsOpen2((open) => !open)}
@@ -131,7 +166,23 @@ function Main() {
         </button>
         {isOpen2 && (
           <>
-            <div className="summary">
+            <WatchedSummary watched={watched} />
+            <WatchedMovieList watched={watched} />
+
+            
+          </>
+        )}
+      </div>
+  )
+}
+
+function WatchedSummary({watched}) {
+  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
+  const avgUserRating = average(watched.map((movie) => movie.userRating));
+  const avgRuntime = average(watched.map((movie) => movie.runtime));
+
+  return (
+    <div className="summary">
               <h2>Movies you watched</h2>
               <div>
                 <p>
@@ -152,10 +203,22 @@ function Main() {
                 </p>
               </div>
             </div>
+  )
+}
 
-            <ul className="list">
+function WatchedMovieList({ watched }) {
+  return(
+    <ul className="list">
               {watched.map((movie) => (
-                <li key={movie.imdbID}>
+                <WatchedMovie movie={movie} key={movie.imdbID}/>
+              ))}
+            </ul>
+  )
+}
+
+function WatchedMovie({movie}){
+  return(
+    <li>
                   <img src={movie.Poster} alt={`${movie.Title} poster`} />
                   <h3>{movie.Title}</h3>
                   <div>
@@ -173,11 +236,5 @@ function Main() {
                     </p>
                   </div>
                 </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-    </main>
-  );
+  )
 }
